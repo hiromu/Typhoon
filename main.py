@@ -82,6 +82,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 		
 		if message == 'finish':
 			queue = queue[1:]
+			dislike = []
 			broadcast()
 		elif message == 'dislike':
 			ip = self.request.remote_ip
