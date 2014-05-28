@@ -2,6 +2,7 @@
 
 import httplib2
 import json
+import os
 import re
 
 import isodate
@@ -15,17 +16,25 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket
 
-CLIENT_SECRETS_FILE = 'client_secrets.json'
+CLIENT_SECRETS_FILE = os.path.join(os.path.dirname(__file__), 'client_secrets.json')
+OAUTH_STORAGE_FILE = os.path.join(os.path.dirname(__file__), 'oauth2.json')
+
 YOUTUBE_READ_SCOPE = 'https://www.googleapis.com/auth/youtube.readonly'
 YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
-LIMIT = 3
+
+DISLIKE_LIMIT = 3
 
 api = None
 
 clients = []
 dislike = []
 queue = []
+
+def broadcast():
+	message = json.dumps({'queue': queue, 'dislike': len(dislike), 'limit': DISLIKE_LIMIT})
+	for client in clients:
+		client.write_message(message)
 
 class MainHandler(tornado.web.RequestHandler):
 	def get(self):
@@ -48,10 +57,7 @@ class MainHandler(tornado.web.RequestHandler):
 					duration = str(isodate.parse_duration(movie['contentDetails']['duration']))
 					
 					queue.append({'id': id, 'title': title, 'duration': duration,})
-					
-					message = json.dumps({'queue': queue, 'dislike': len(dislike), 'limit': LIMIT})
-					for client in clients:
-						client.write_message(message)
+					broadcast()
 				else:
 					error = 'Not found'
 			else:
@@ -69,14 +75,14 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 	def open(self):
 		if self not in clients:
 			clients.append(self)
-			self.write_message({'queue': queue, 'dislike': len(dislike), 'limit': LIMIT})
+			self.write_message({'queue': queue, 'dislike': len(dislike), 'limit': DISLIKE_LIMIT})
 	
 	def on_message(self, message):
 		global queue, dislike
 		
 		if message == 'finish':
 			queue = queue[1:]
-			self.update()
+			broadcast()
 		elif message == 'dislike':
 			ip = self.request.remote_ip
 			if ip not in dislike:
@@ -84,13 +90,8 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 				if len(dislike) >= LIMIT:
 					queue = queue[1:]
 					dislike = []
-				self.update()
+				broadcast()
 	
-	def update(self):
-		message = json.dumps({'queue': queue, 'dislike': len(dislike), 'limit': LIMIT})
-		for client in clients:
-			client.write_message(message)
-			
 	def on_close(self):
 		if self in clients:
 			clients.remove(self)
@@ -102,18 +103,18 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 application = tornado.web.Application([
 	(r'/', MainHandler),
 	(r'/monitor', MonitorHandler),
-	(r'/list', WebSocketHandler),
+	(r'/websocket', WebSocketHandler),
 ])
 
 if __name__ == '__main__':
 	flow = oauth2client.client.flow_from_clientsecrets(CLIENT_SECRETS_FILE, scope = YOUTUBE_READ_SCOPE)
 	
-	storage = oauth2client.file.Storage('oauth2.json')
+	storage = oauth2client.file.Storage(OAUTH_STORAGE_FILE)
 	credentials = storage.get()
 	if credentials is None or credentials.invalid:
 		credentials = oauth2client.tools.run_flow(flow, storage, oauth2client.tools.argparser.parse_args())
 	
 	api = apiclient.discovery.build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, http = credentials.authorize(httplib2.Http()))
 	
-	application.listen(80)
+	application.listen(23456)
 	tornado.ioloop.IOLoop.instance().start()
