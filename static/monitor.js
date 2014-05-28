@@ -28,16 +28,18 @@ function init() {
 	ws = new WebSocket(hostname);
 	
 	ws.onmessage = function(message) {
-		var songs = JSON.parse(message.data).queue;
-		var ol = document.getElementById('list');
-		
-		for(var i = ol.childNodes.length - 1; i > -1; i--)
-			ol.removeChild(ol.childNodes[i]);
-		
+		var data = JSON.parse(message.data);
+		var songs = data.queue;
+		$('#dislike').text(data.dislike + ' / ' + data.limit);
+
+		var table = $('div.queue>table>tbody');
+		table.children().remove();
 		for(var i = 0; i < songs.length; i++) {
-			var element = document.createElement('li');
-			element.innerText = songs[i].title + ' (' + songs[i].duration + ')';
-			ol.appendChild(element);
+			var tr = $('<tr>');
+			tr.append($('<td>').text(i + 1));
+			tr.append($('<td>').text(songs[i].title));
+			tr.append($('<td>').text(songs[i].duration));
+			table.append(tr);
 		}
 		
 		if(songs.length == 0) {
