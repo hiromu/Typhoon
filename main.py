@@ -88,7 +88,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 			ip = self.request.remote_ip
 			if ip not in dislike:
 				dislike.append(ip)
-				if len(dislike) >= LIMIT:
+				if len(dislike) >= DISLIKE_LIMIT:
 					queue = queue[1:]
 					dislike = []
 				broadcast()
