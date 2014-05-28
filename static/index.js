@@ -6,19 +6,17 @@ function init() {
 	
 	ws.onmessage = function(message) {
 		var data = JSON.parse(message.data);
-		var dislike = document.getElementById('dislike');
-		dislike.innerText = 'Dislike: ' + data.dislike + '/' + data.limit;
-		
 		var songs = data.queue;
-		var ol = document.getElementById('list');
+		$('#dislike').text(data.dislike + ' / ' + data.limit);
 		
-		for(var i = ol.childNodes.length - 1; i > -1; i--)
-			ol.removeChild(ol.childNodes[i]);
-		
+		var table = $('div.queue>table>tbody');
+		table.children().remove();
 		for(var i = 0; i < songs.length; i++) {
-			var element = document.createElement('li');
-			element.innerText = songs[i].title + ' (' + songs[i].duration + ')';
-			ol.appendChild(element);
+			var tr = $('<tr>');
+			tr.append($('<td>').text(i + 1));
+			tr.append($('<td>').text(songs[i].title));
+			tr.append($('<td>').text(songs[i].duration));
+			table.append(tr);
 		}
 	}
 	

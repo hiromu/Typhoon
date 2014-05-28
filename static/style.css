@@ -1,0 +1,22 @@
+div.container {
+	width: 800px;
+	margin: 0 auto;
+}
+
+div.main {
+	margin: 10px;
+}
+
+div.queue {
+	margin: 10px;
+}
+
+div.dislike {
+	font-size: 20px;
+	margin: 20px;
+	text-align: center;
+}
+
+div.dislike button {
+	margin: 0 10px;
+}
