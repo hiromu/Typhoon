@@ -8,6 +8,10 @@ function onYouTubePlayerAPIReady() {
 	player = new YT.Player('player', {
 		height: '768',
 		width: '1024',
+		playerVars: {
+			'controls': 0,
+			'disablekb': 1
+		},
 		events: {
 			'onReady': onPlayerReady,
 			'onStateChange': onPlayerStateChange
