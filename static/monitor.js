@@ -56,6 +56,7 @@ function init() {
 			player.stopVideo();
 		} else if(songs[0].id != id) {
 			id = songs[0].id;
+			document.title = songs[0].title + ' - Typhoon Youtube Player';
 			player.loadVideoById(id);
 		}
 	}
