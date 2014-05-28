@@ -13,7 +13,12 @@ function init() {
 		table.children().remove();
 		for(var i = 0; i < songs.length; i++) {
 			var tr = $('<tr>');
-			tr.append($('<td>').text(i + 1));
+
+			if(i == 0)
+				tr.append($('<td>').text('Now'));
+			else
+				tr.append($('<td>').text(i));
+
 			tr.append($('<td>').text(songs[i].title));
 			tr.append($('<td>').text(songs[i].duration));
 			table.append(tr);
