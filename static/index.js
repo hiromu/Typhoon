@@ -1,4 +1,4 @@
-var hostname = 'ws://' + location.hostname + '/websocket';
+var hostname = 'ws://' + location.hostname + ':' + location.port + '/websocket';
 var ws;
 		
 function init() {
