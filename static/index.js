@@ -36,5 +36,5 @@ function init() {
 }
 
 function dislike() {
-	ws.send('dislike');
+	ws.send(JSON.stringify({'dislike': 1}));
 }

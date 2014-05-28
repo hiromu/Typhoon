@@ -80,11 +80,12 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 	def on_message(self, message):
 		global queue, dislike
 		
-		if message == 'finish':
+		message = json.loads(message)
+		if 'finish' in message and message['finish'] == queue[0]['id']:
 			queue = queue[1:]
 			dislike = []
 			broadcast()
-		elif message == 'dislike':
+		elif 'dislike' in message:
 			ip = self.request.remote_ip
 			if ip not in dislike:
 				dislike.append(ip)

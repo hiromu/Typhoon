@@ -25,7 +25,7 @@ function onPlayerReady(event) {
 
 function onPlayerStateChange(event) {
 	if(event.data == 0)
-		ws.send('finish');
+		ws.send(JSON.stringify({'finish': id}));
 }
 
 function init() {
