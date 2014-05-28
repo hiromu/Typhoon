@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Typhoon</title>
+		<script src="{{ static_url('index.js') }}"></script>
+	</head>
+	<body onload="init()">
+		<p>{{ error }}</p>
+		<ol id="list">
+		</ol>
+		<form method="POST">
+			<input type="text" name="url" placeholder="http://www.youtube.com/watch?v=********" />
+			<input type="submit" value="submit" />
+		</form>
+		<button onclick="dislike()">Dislike</button>
+		<p id="dislike"></p>
+	</body>
+</html>

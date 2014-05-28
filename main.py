@@ -38,7 +38,7 @@ def broadcast():
 
 class MainHandler(tornado.web.RequestHandler):
 	def get(self):
-		return self.render('index.html', error = '')
+		return self.render(os.path.join('template', 'index.html'), error = '')
 		
 	def post(self):
 		url = self.get_argument('url')
@@ -65,11 +65,11 @@ class MainHandler(tornado.web.RequestHandler):
 		else:
 			error = 'Invalid URL'
 			
-		return self.render('index.html', error = error)
+		return self.render(os.path.join('templates', 'index.html'), error = error)
 
 class MonitorHandler(tornado.web.RequestHandler):
 	def get(self):
-		return self.render('monitor.html')
+		return self.render(os.path.join('templates', 'monitor.html'))
 		
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
 	def open(self):
@@ -100,11 +100,6 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 		if self in clients:
 			clients.remove(self)
 
-application = tornado.web.Application([
-	(r'/', MainHandler),
-	(r'/monitor', MonitorHandler),
-	(r'/websocket', WebSocketHandler),
-])
 
 if __name__ == '__main__':
 	flow = oauth2client.client.flow_from_clientsecrets(CLIENT_SECRETS_FILE, scope = YOUTUBE_READ_SCOPE)
@@ -116,5 +111,11 @@ if __name__ == '__main__':
 	
 	api = apiclient.discovery.build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, http = credentials.authorize(httplib2.Http()))
 	
+	application = tornado.web.Application([
+		(r'/', MainHandler),
+		(r'/monitor', MonitorHandler),
+		(r'/websocket', WebSocketHandler),
+	], static_path = os.path.join(os.path.dirname(__file__), 'static'))
+
 	application.listen(23456)
 	tornado.ioloop.IOLoop.instance().start()
