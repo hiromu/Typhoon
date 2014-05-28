@@ -42,7 +42,7 @@ class MainHandler(tornado.web.RequestHandler):
 		
 	def post(self):
 		url = self.get_argument('url')
-		match = re.match('^https?://www.youtube.com/watch\?v=(.*)$', url)
+		match = re.match('^https?://www.youtube.com/watch\?v=([^&]*)', url)
 		error = ''
 		
 		if match:
