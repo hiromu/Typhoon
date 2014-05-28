@@ -38,7 +38,7 @@ def broadcast():
 
 class MainHandler(tornado.web.RequestHandler):
 	def get(self):
-		return self.render(os.path.join('template', 'index.html'), error = '')
+		return self.render(os.path.join('templates', 'index.html'), error = '')
 		
 	def post(self):
 		url = self.get_argument('url')
