@@ -64,7 +64,7 @@ class MainHandler(tornado.web.RequestHandler):
 				error = 'The movie is already in queue'
 		else:
 			error = 'Invalid URL'
-
+			
 		return self.render(os.path.join('templates', 'index.html'), error = error)
 
 class MonitorHandler(tornado.web.RequestHandler):
