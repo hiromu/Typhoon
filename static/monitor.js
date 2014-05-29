@@ -1,6 +1,7 @@
 var hostname = 'ws://' + location.hostname + ':' + location.port + '/websocket';
 
 var id;
+var title;
 var ws;
 var player;
 
@@ -53,9 +54,11 @@ function init() {
 		
 		if(songs.length == 0) {
 			id = null;
+			document.title = title;
 			player.stopVideo();
 		} else if(songs[0].id != id) {
 			id = songs[0].id;
+			document.title = songs[0].title + ' - ' + title;
 			player.loadVideoById(id);
 		}
 	}
@@ -68,4 +71,6 @@ function init() {
 		ws.close();
 		ws = new WebSocket(hostname);
 	}
+
+	title = document.title;
 }
