@@ -34,11 +34,12 @@ function init() {
 		ws = new ReconnectingWebSocket(hostname);
 	else
 		ws = new WebSocket(hostname);
-	
+
 	ws.onmessage = function(message) {
 		var data = JSON.parse(message.data);
 		var songs = data.queue;
 		$('#dislike').text(data.dislike + ' / ' + data.limit);
+		$('#volume').text(data.volume);
 
 		var table = $('div.queue>table>tbody');
 		table.children().remove();
@@ -54,7 +55,7 @@ function init() {
 			tr.append($('<td>').text(songs[i].duration));
 			table.append(tr);
 		}
-		
+
 		if(songs.length == 0) {
 			id = null;
 			document.title = title;
@@ -64,7 +65,9 @@ function init() {
 			document.title = songs[0].title + ' - ' + title;
 			player.loadVideoById(id);
 		}
+
+		player.setVolume(data.volume);
 	}
-	
+
 	title = document.title;
 }

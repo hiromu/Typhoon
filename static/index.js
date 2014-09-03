@@ -1,17 +1,18 @@
 var hostname = 'ws://' + location.hostname + ':' + location.port + '/websocket';
 var ws;
-		
+
 function init() {
 	if (window['ReconnectingWebSocket'] != undefined)
 		ws = new ReconnectingWebSocket(hostname);
 	else
 		ws = new WebSocket(hostname);
-	
+
 	ws.onmessage = function(message) {
 		var data = JSON.parse(message.data);
 		var songs = data.queue;
 		$('#dislike').text(data.dislike + ' / ' + data.limit);
-		
+		$('#volume').text(data.volume);
+
 		var table = $('div.queue>table>tbody');
 		table.children().remove();
 		for (var i = 0; i < songs.length; i++) {
@@ -31,4 +32,12 @@ function init() {
 
 function dislike() {
 	ws.send(JSON.stringify({'dislike': 1}));
+}
+
+function volumedown() {
+	ws.send(JSON.stringify({'volumedown': 1}));
+}
+
+function volumeup() {
+	ws.send(JSON.stringify({'volumeup': 1}));
 }

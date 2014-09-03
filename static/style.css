@@ -19,13 +19,12 @@ div.queue {
 	margin: 10px;
 }
 
-div.dislike {
+div.button-row {
 	font-size: 20px;
 	margin: 20px;
 	text-align: center;
 }
 
-div.dislike button {
+div.button-row button {
 	margin: 0 10px;
 }
-
