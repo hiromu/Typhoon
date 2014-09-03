@@ -30,7 +30,10 @@ function onPlayerStateChange(event) {
 }
 
 function init() {
-	ws = new WebSocket(hostname);
+	if (window['ReconnectingWebSocket'] != undefined)
+		ws = new ReconnectingWebSocket(hostname);
+	else
+		ws = new WebSocket(hostname);
 	
 	ws.onmessage = function(message) {
 		var data = JSON.parse(message.data);
@@ -63,14 +66,5 @@ function init() {
 		}
 	}
 	
-	ws.onclose = function() {
-		ws.close();
-		ws = new WebSocket(hostname);
-	}
-	ws.onerror = function() {
-		ws.close();
-		ws = new WebSocket(hostname);
-	}
-
 	title = document.title;
 }

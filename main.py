@@ -86,7 +86,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 			dislike = []
 			broadcast()
 		elif 'dislike' in message:
-			ip = self.request.remote_ip
+			ip = self.request.headers.get('X-Forwarded-For', self.request.headers.get('X-Real-Ip', self.request.remote_ip))
 			if ip not in dislike:
 				dislike.append(ip)
 				if len(dislike) >= DISLIKE_LIMIT:

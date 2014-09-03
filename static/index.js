@@ -2,7 +2,10 @@ var hostname = 'ws://' + location.hostname + ':' + location.port + '/websocket';
 var ws;
 		
 function init() {
-	ws = new WebSocket(hostname);
+	if (window['ReconnectingWebSocket'] != undefined)
+		ws = new ReconnectingWebSocket(hostname);
+	else
+		ws = new WebSocket(hostname);
 	
 	ws.onmessage = function(message) {
 		var data = JSON.parse(message.data);
@@ -11,10 +14,10 @@ function init() {
 		
 		var table = $('div.queue>table>tbody');
 		table.children().remove();
-		for(var i = 0; i < songs.length; i++) {
+		for (var i = 0; i < songs.length; i++) {
 			var tr = $('<tr>');
 
-			if(i == 0)
+			if (i == 0)
 				tr.append($('<td>').text('Now'));
 			else
 				tr.append($('<td>').text(i));
@@ -23,15 +26,6 @@ function init() {
 			tr.append($('<td>').text(songs[i].duration));
 			table.append(tr);
 		}
-	}
-	
-	ws.onclose = function() {
-		ws.close();
-		ws = new WebSocket(hostname);
-	}
-	ws.onerror = function() {
-		ws.close();
-		ws = new WebSocket(hostname);
 	}
 }
 
